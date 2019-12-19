@@ -21,6 +21,10 @@ main() {
         args+=(--kubeconfig "${INPUT_KUBECONFIG}")
     fi
 
+    if [[ "${INPUT_ALWAYS:-}" = "true" ]]; then
+        args+=(--always)
+    fi
+
     "$SCRIPT_DIR/ct.sh" "${args[@]}"
 }
 

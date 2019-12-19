@@ -5,6 +5,8 @@ branding:
   color: blue
   icon: anchor
 inputs:
+  always:
+    description: "Allow running always"
   image:
     description: "The chart-testing Docker image to use (default: quay.io/helmpack/chart-testing:v2.4.0)"
   config:

@@ -15,6 +15,7 @@ Usage: $(basename "$0") <options>
     -c, --command       The chart-testing command to run
         --config        The path to the chart-testing config file
         --kubeconfig    The path to the kube config file
+        --always        Run always, do not detect changes
 EOF
 }
 
@@ -22,6 +23,7 @@ main() {
     local image="$DEFAULT_IMAGE"
     local config=
     local command=
+    local always=
     local kubeconfig="$HOME/.kube/config"
 
     parse_command_line "$@"
@@ -35,11 +37,13 @@ main() {
     run_ct_container
     trap cleanup EXIT
 
-    local changed
-    changed=$(docker_exec ct list-changed)
-    if [[ -z "$changed" ]]; then
-        echo 'No chart changes detected.'
-        return
+    if [[ "$always" != "true" ]]; then
+        local changed
+        changed=$(docker_exec ct list-changed)
+        if [[ -z "$changed" ]]; then
+            echo 'No chart changes detected.'
+            return
+        fi
     fi
 
     if [[ "$command" == "lint" ]]; then
@@ -98,6 +102,9 @@ parse_command_line() {
                     show_help
                     exit 1
                 fi
+                ;;
+            --always)
+                always="true"
                 ;;
             *)
                 break
